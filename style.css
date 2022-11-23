@@ -7,11 +7,17 @@
     font-family: 'Noto Sans', sans-serif;
 }
 
+.instructions > h2 {
+    font-size: 1rem;
+}
+
 .answer-item {
     border: 1px solid rgb(153, 153, 153);
     list-style: none;
-    padding: 1rem;
-    margin: 1rem;
     background: #f1efef;
     cursor: pointer;
+}
+
+.game-toggle {
+    display: none;
 }
