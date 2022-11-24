@@ -17,26 +17,23 @@
             <div class="instructions">
                 <h2>To start the game: Press the number of classmates you want to guess:</h2>
                 <ul class="start-game d-flex justify-content-center">
-                    <button class="btn btn-success m-2">10</button>
-                    <button class="btn btn-success m-2">20</button>
-                    <button class="btn btn-success m-2">All</button>
+                    <button class="btn btn-success m-2" id="ten-rounds">10</button>
+                    <button class="btn btn-success m-2" id="twenty-rounds">20</button>
+                    <button class="btn btn-success m-2" id="all-rounds">All</button>
                 </ul>
             </div>
         </div>
     </header>
 
     <main class="container game-toggle text-center ">
-        <h3 class="text-end">Question: -/-</h3>
-        <div class="question">
-            <img class="mt-3" src="https://www.thisisanfield.com/wp-content/uploads/2K69DGX-1.jpg" alt="Picture of a person to guess" style="height: 400px">
+        <h3 class="text-end" id="question-counter"></h3>
+        <div class="mt-3" id="question">
+            <img src="" alt="">  
         </div>
 
         <div class="answers mt-5 d-flex justify-content-center">
-            <ul class="answer-list row">
-                <li class="answer-item col-5 m-2 p-4">Mohammed Salah</li>
-                <li class="answer-item col-5 m-2 p-4">Luis Diaz</li>
-                <li class="answer-item col-5 m-2 p-4">Sadio Mané</li>
-                <li class="answer-item col-5 m-2 p-4">Virgil Van Dijk</li>
+            <ul class="row col-12 m-2 p-4 d-flex justify-content-center answer-list" id="answer-list">
+
             </ul>
         </div>
     </main>

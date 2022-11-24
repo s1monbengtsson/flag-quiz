@@ -12,12 +12,11 @@
 }
 
 .answer-item {
+    font-size: .7rem;
     border: 1px solid rgb(153, 153, 153);
     list-style: none;
     background: #f1efef;
     cursor: pointer;
 }
 
-.game-toggle {
-    display: none;
-}
+
