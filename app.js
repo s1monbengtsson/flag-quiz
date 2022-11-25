@@ -19,15 +19,16 @@ console.log(getStudentId);
 const randomStudentID = getStudentId.sort((a, b) => {
     return Math.random() - 0.5;
 });
-console.assert,
 
 
 
 
-    // add click events to show number of rounds depending on what user picks
-    tenRounds.addEventListener('click', () => {
-        questionCounterEl.innerText = 'Question: -/10';
-    });
+
+
+// add click events to show number of rounds depending on what user picks
+tenRounds.addEventListener('click', () => {
+    questionCounterEl.innerText = 'Question: -/10';
+});
 
 twentyRounds.addEventListener('click', () => {
     questionCounterEl.innerText = 'Question: -/20';
@@ -52,11 +53,11 @@ const playGame = (() => {
     });
 
     instructions.style.display = "none";
-    pictureEl.innerHTML += `<img src="assets/images/students/simon_bengtsson.jpg" alt"">`
+    pictureEl.innerHTML = `<img src=${students[1].image}>`
     listEl.innerHTML += `<li class="answer-item row col-5 m-2 p-4 d-flex justify-content-center">${shuffledStudents[1].name} </li>`
     listEl.innerHTML += `<li class="answer-item row col-5 m-2 p-4 d-flex justify-content-center">${shuffledStudents[2].name}</li>`
-    listEl.innerHTML += `<li class="answer-item row col-5 m-2 p-4 d-flex justify-content-center">Simon Bengtsson</li>`
     listEl.innerHTML += `<li class="answer-item row col-5 m-2 p-4 d-flex justify-content-center">${shuffledStudents[3].name}</li>`
+    listEl.innerHTML += `<li class="answer-item row col-5 m-2 p-4 d-flex justify-content-center">${shuffledStudents[4].name}</li>`
 });
 
 // Click event for starting the game
