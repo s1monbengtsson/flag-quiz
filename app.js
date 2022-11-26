@@ -7,27 +7,43 @@ const listEl = document.querySelector('#answer-list');
 const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('.answers');
 const questionCounterEl = document.querySelector('#question-counter');
+const roundCounterEl = document.querySelector('#rounds-to-play');
 const tenRounds = document.querySelector('#ten-rounds');
 const twentyRounds = document.querySelector('#twenty-rounds');
-const allRounds = document.querySelector('#all-rounds');
+const maxRounds = document.querySelector('#all-rounds');
 
 // creating array to store users answers
 const userAnswers = [];
 
+// counter for how many rounds has been played
 let roundCounter = 1;
+
+// sets the number of rounds to play depending on choice of user
+let roundsToPlay;
 
 
 // add click events to show number of rounds depending on what user picks
 tenRounds.addEventListener('click', () => {
-    questionCounterEl.innerText = 'Question: 1/10';
+    let roundsToPlay = 10;
+    playGame();
+    questionCounterEl.innerText = `Question: ${roundCounter}/`;
+    roundCounterEl.innerText = `${roundsToPlay}`;
+
+
 });
 
 twentyRounds.addEventListener('click', () => {
-    questionCounterEl.innerText = 'Question: 1/20';
+    let roundsToPlay = 20;
+    playGame();
+    questionCounterEl.innerText = `Question: ${roundCounter}/`;
+    roundCounterEl.innerText = `${roundsToPlay}`;
 });
 
-allRounds.addEventListener('click', () => {
-    questionCounterEl.innerText = 'Question: 1/45';
+maxRounds.addEventListener('click', () => {
+    let roundsToPlay = 45;
+    playGame();
+    questionCounterEl.innerText = `Question: ${roundCounter}/`;
+    roundCounterEl.innerText = `${roundsToPlay}`;
 });
 
 
@@ -53,13 +69,13 @@ const playGame = (() => {
     console.log(slicedStudents[0]);
 
     // Shuffle ONLY pictures so picture and correct answer is not the same index
-    const randomizePictures = getPictures.sort((a, b) => {
+    const randomPicture = getPictures.sort((a, b) => {
         return Math.random() - 0.5;
     });
 
 
     instructions.style.display = "none";
-    pictureEl.innerHTML = `<img src=${randomizePictures[0]}>`
+    pictureEl.innerHTML = `<img src=${randomPicture[0]}>`
     listEl.innerHTML += `<button class="answer-item row col-5 m-2 px-5 d-flex justify-content-center align-items-center btn btn-primary">${slicedStudents[0].name} </button>`
     listEl.innerHTML += `<button class="answer-item row col-5 m-2 px-5 d-flex justify-content-center align-items-center btn btn-primary">${slicedStudents[1].name}</button>`
     listEl.innerHTML += `<button class="answer-item row col-5 m-2 px-5 d-flex justify-content-center align-items-center btn btn-primary">${slicedStudents[2].name}</button>`
@@ -74,7 +90,7 @@ startGame.addEventListener('click', () => {
 answersEl.addEventListener('click', (e) => {
     playGame();
 
-    questionCounterEl.innerText = `Question: ${roundCounter + 1}/10(hardcode)`;
+    questionCounterEl.innerText = `Question: ${roundCounter + 1}/`;
     roundCounter++;
 
     // pushed the guess to an array
