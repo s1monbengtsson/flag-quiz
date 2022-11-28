@@ -16,28 +16,26 @@
        <div class="container d-flex justify-content-center mt-5">
             <div class="instructions">
                 <h2>To start the game: Press the number of classmates you want to guess:</h2>
-                <ul class="start-game d-flex justify-content-center">
-                    <button class="btn btn-success m-2" id="ten-rounds">10</button>
-                    <button class="btn btn-success m-2" id="twenty-rounds">20</button>
-                    <button class="btn btn-success m-2" id="all-rounds">All</button>
+                <ul class=" game-start d-flex justify-content-center">
+                    <button class="btn btn-warning m-2 px-4 start-game">10</button>
+                    <button class="btn btn-warning m-2 px-4 start-game">20</button>
+                    <button class="btn btn-warning m-2 px-4 start-game">41</button>
                 </ul>
             </div>
         </div>
     </header>
 
-    <main class="container game-toggle text-center ">
+    <main class="container text-center ">
         <div class="question-holder d-flex justify-content-end">
-        <h3 id="question-counter"></h3>
-        <h3 id="rounds-to-play"></span>
-    </div>
+            <h3 id="question-counter"></h3>
+            <h3 id="rounds-to-play"></span>
+        </div>
         <div class="mt-3" id="image-holder"></div>
 
-        <div class="answers mt-5 d-flex justify-content-center">
-            <div class="row col-12 m-2 p-4 d-flex justify-content-center answer-list" id="answer-list">
-
-            </div>
-        </div>
+        <div class="answers mt-5 d-flex justify-content-center row col-12"></div>
     </main>
+
+    <div id="results"></div>
 
     <script src="students.js"></script>
     <script src="app.js"></script>
