@@ -50,40 +50,29 @@ startGame.addEventListener('click', (e) => {
         questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
         roundCounter++;
 
-        // pushed the guess to an array
+        // pushes the guess to an array
         userAnswers.push(e.target.textContent);
+
+        console.log(key);
 
         if (roundCounter > roundsToPlay) {
             console.log('exiting game');
             exitGame();
         }
+
     });
 
 });
 
 
-
-// twentyRounds.addEventListener('click', () => {
-//     let roundsToPlay = 20;
-//     playGame();
-//     questionCounterEl.innerText = `Question: ${roundCounter}/`;
-//     roundCounterEl.innerText = `${roundsToPlay}`;
-// });
-
-// maxRounds.addEventListener('click', () => {
-//     let roundsToPlay = 41;
-//     playGame();
-//     questionCounterEl.innerText = `Question: ${roundCounter}/`;
-//     roundCounterEl.innerText = `${roundsToPlay}`;
-// });
-
-
 // Function that prints HTML when game is active
 const playGame = () => {
+
     // Empty question and answer before every run
     pictureEl.innerHTML = '';
     answersEl.innerHTML = '';
 
+    // Creating a copy of students 
     const shuffledStudents = students;
 
     // Shuffling objects in students to make game non-predictable
@@ -95,13 +84,25 @@ const playGame = () => {
 
     // variable for the right answer, and sets the image on display
     let correctStudent = shuffledStudents[0];
-
     key.push(correctStudent);
 
-    pictureEl.innerHTML = `<img src=${correctStudent.image}>`
-    shuffledStudents.shift();
-    console.log('removed:', shuffledStudents.shift());
+    // Removed the student that has been displayed!
+    console.log("removed:", shuffledStudents.shift());
+    console.log(shuffledStudents);
 
+
+    console.log(shuffledStudents);
+
+
+    // returns if studentt is correct
+    filteredStudents = shuffledStudents.filter(student => {
+        return (student === correctStudent);
+    });
+
+
+
+
+    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
     // console.log('correct student:', correctStudent);
 
     // Shuffle the sliced array once again to make the game more randomized
@@ -125,6 +126,7 @@ const playGame = () => {
 
 };
 
+
 // Click event for starting the game
 
 
@@ -136,8 +138,19 @@ const playGame = () => {
 const exitGame = () => {
     container.style.display = "none";
     showResults.innerHTML += `<p>${userAnswers}</p>`;
-    showResults.innerHTML += `<p>Correct answers will go here:</p>`;
+    showResults.innerHTML += `<p>${key}</p>`;
 };
+
+
+/**
+ * Todo innan inlämning:
+ * Refactorera koden, ingen kod ska upprepas i onödan
+ * Lägga in img-element i HTML, och istället pusha in en source genom playGame()
+ * Gå igenom och ta bort variabler som ej används
+ * Snygg display av jämförelse mellan vad användare svarat och facit
+ * Säkerställa att både map() och filter() används för VG
+ * Kontrollera så spelet är responsivt och funkar i mobil
+ */
 
 
 
