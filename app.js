@@ -38,29 +38,33 @@ const shuffleStudents = (array) => {
 
 // add click events to show number of rounds depending on what user picks
 startGame.addEventListener('click', (e) => {
-    let roundsToPlay = Number(e.target.innerText);
-    console.log(roundsToPlay);
-    playGame();
-    questionCounterEl.innerText = `Question: ${roundCounter}/`;
-    roundCounterEl.innerText = `${roundsToPlay}`;
 
-    answersEl.addEventListener('click', (e) => {
+    if (e.target.tagName === "BUTTON") {
+
+        let roundsToPlay = Number(e.target.innerText);
+        console.log(roundsToPlay);
         playGame();
+        questionCounterEl.innerText = `Question: ${roundCounter}/`;
+        roundCounterEl.innerText = `${roundsToPlay}`;
 
-        questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
-        roundCounter++;
+        answersEl.addEventListener('click', (e) => {
+            playGame();
 
-        // pushes the guess to an array
-        userAnswers.push(e.target.textContent);
+            questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
+            roundCounter++;
 
-        console.log(key);
+            // pushes the guess to an array
+            userAnswers.push(e.target.textContent);
 
-        if (roundCounter > roundsToPlay) {
-            console.log('exiting game');
-            exitGame();
-        }
+            console.log(key);
 
-    });
+            if (roundCounter > roundsToPlay) {
+                console.log('exiting game');
+                exitGame();
+            }
+
+        });
+    }
 
 });
 
@@ -94,10 +98,6 @@ const playGame = () => {
     console.log(shuffledStudents);
 
 
-    // returns if studentt is correct
-    filteredStudents = shuffledStudents.filter(student => {
-        return (student === correctStudent);
-    });
 
 
 
