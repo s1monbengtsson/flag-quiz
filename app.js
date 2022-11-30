@@ -8,7 +8,10 @@ const answersEl = document.querySelector('.answers');
 const questionCounterEl = document.querySelector('#question-counter');
 const roundCounterEl = document.querySelector('#rounds-to-play');
 const wrapper = document.querySelector('#wrapper');
-const showResults = document.querySelector('#results');
+const results = document.querySelector('#results');
+const userAnswersEl = document.querySelector('#userAnswers');
+const keyEl = document.querySelector('#key');
+const playAgainEl = document.querySelector('#playAgain');
 
 // Variable that stores the user's answers
 let userAnswers = [];
@@ -25,6 +28,8 @@ let roundCounter = 1;
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
 
+let correctStudent;
+
 
 // Fisher-Yates algorithm for shuffling array
 const shuffleStudents = (array) => {
@@ -37,7 +42,7 @@ const shuffleStudents = (array) => {
 };
 
 // add click events to show number of rounds depending on what user picks
-startGame.addEventListener('click', (e) => {
+startGame.addEventListener('click', e => {
 
     // Checks if the click happened on a button, and runs if so was
     if (e.target.tagName === "BUTTON") {
@@ -55,31 +60,35 @@ startGame.addEventListener('click', (e) => {
 
 
         // Adding eventlistener to run playGame() once user has answered a question
-        answersEl.addEventListener('click', (e) => {
-            playGame();
-
-
-            // Updates the round counter for each round
-            questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
-            roundCounter++;
-
-            // pushes the guess to a new array for later display
-            userAnswers.push(e.target.textContent);
-
+        answersEl.addEventListener('click', e => {
 
             // When set number of rounds are played, exitGame() will run.
-            if (roundCounter > roundsToPlay) {
+            if (roundCounter === roundsToPlay) {
+                // push the last guess to userAnswers before exiting game
+                userAnswers.push(e.target.textContent);
                 console.log('exiting game');
                 exitGame();
             };
+
+            // Checks if the click happend on a button, and runs if so was
+            if (e.target.tagName === "BUTTON") {
+
+                playGame();
+
+                // Updates the round counter for each round
+                questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
+                roundCounter++;
+
+                // pushes the guess to a new array for later display
+                userAnswers.push(e.target.textContent);
+            };
         });
     };
-
 });
 
 
 // Function that prints HTML when game is active
-const playGame = () => {
+const playGame = (e) => {
 
     // Empty question and answer before every run
     pictureEl.innerHTML = '';
@@ -133,15 +142,32 @@ const playGame = () => {
 
 const exitGame = () => {
     wrapper.classList.add('hide')
+
+    // initializes i as 0 and the increment i by 1 each time loop runs.
+    let i = 0;
+
+    // 
+    // key.pop();
+
     userAnswers.forEach(answer => {
-        showResults.innerHTML += `
-        <li class="d-flex justify-content-center">Your Answers: ${answer}</li>
+        i++
+        userAnswersEl.innerHTML += `
+        <li class="d-flex justify-content-center mt-1 list-none">Your Answer on question ${i}: ${answer}</li>
         `;
     });
+
+    i = 0;
     key.forEach(student => {
-        showResults.innerHTML += `
-        <li class="d-flex justify-content-center">Correct answers: ${student.name} <img src="${student.image}"></li>
+        i++;
+        keyEl.innerHTML += `
+        <li class="d-flex justify-content-center col-12 list-none">Correct answer on question ${i}: ${student.name} <img src="${student.image}" class="mx-5"style="height:100px"></li>
         `;
+    });
+
+    playAgainEl.innerHTML = `<button class="btn btn-primary py-4 my-3">Play Again</button>`
+
+    playAgainEl.addEventListener('click', () => {
+        window.location.reload();
     });
 };
 
@@ -154,6 +180,8 @@ const exitGame = () => {
  * Snygg display av jämförelse mellan vad användare svarat och facit
  * Säkerställa att både map() och filter() används för VG
  * Kontrollera så spelet är responsivt och funkar i mobil
+ * Om tid finns, hitta ett bättre sätt för playAgain än att refresha sidan
+ * Merge dev into main
  */
 
 
