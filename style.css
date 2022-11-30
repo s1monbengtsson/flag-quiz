@@ -7,6 +7,7 @@
     font-family: 'Noto Sans', sans-serif;
 }
 
+
 .instructions > h2 {
     font-size: 1rem;
 }
@@ -17,6 +18,10 @@
     list-style: none;
     background: #f1efef;
     cursor: pointer;
+}
+
+.hide {
+    display: none;
 }
 
 
