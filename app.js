@@ -7,7 +7,7 @@ const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('.answers');
 const questionCounterEl = document.querySelector('#question-counter');
 const roundCounterEl = document.querySelector('#rounds-to-play');
-const container = document.querySelector('.container');
+const wrapper = document.querySelector('#wrapper');
 const showResults = document.querySelector('#results');
 
 // Variable that stores the user's answers
@@ -39,32 +39,41 @@ const shuffleStudents = (array) => {
 // add click events to show number of rounds depending on what user picks
 startGame.addEventListener('click', (e) => {
 
+    // Checks if the click happened on a button, and runs if so was
     if (e.target.tagName === "BUTTON") {
 
+        // Sets the number of rounds to play to the same number as the pressed button
         let roundsToPlay = Number(e.target.innerText);
-        console.log(roundsToPlay);
+        console.log("rounds to play:", roundsToPlay);
+
+        // run playGame() function to start game
         playGame();
+
+        // Sets the round counter and rounds to play and prints to DOM
         questionCounterEl.innerText = `Question: ${roundCounter}/`;
         roundCounterEl.innerText = `${roundsToPlay}`;
 
+
+        // Adding eventlistener to run playGame() once user has answered a question
         answersEl.addEventListener('click', (e) => {
             playGame();
 
+
+            // Updates the round counter for each round
             questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
             roundCounter++;
 
-            // pushes the guess to an array
+            // pushes the guess to a new array for later display
             userAnswers.push(e.target.textContent);
 
-            console.log(key);
 
+            // When set number of rounds are played, exitGame() will run.
             if (roundCounter > roundsToPlay) {
                 console.log('exiting game');
                 exitGame();
-            }
-
+            };
         });
-    }
+    };
 
 });
 
@@ -89,21 +98,16 @@ const playGame = () => {
     // variable for the right answer, and sets the image on display
     let correctStudent = shuffledStudents[0];
     key.push(correctStudent);
+    console.log("Keys:", key);
+
+
+    // Displays image of the student to guess
+    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
 
     // Removed the student that has been displayed!
     console.log("removed:", shuffledStudents.shift());
     console.log(shuffledStudents);
 
-
-    console.log(shuffledStudents);
-
-
-
-
-
-
-    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
-    // console.log('correct student:', correctStudent);
 
     // Shuffle the sliced array once again to make the game more randomized
     shuffleStudents(slicedStudents);
@@ -121,30 +125,30 @@ const playGame = () => {
     // Hide instructions while game is active
     instructions.style.display = "none";
 
-    // Once students X has been displayed on picture, remove student X from array
-
-
+    console.log("userAnswers:", userAnswers);
 };
-
-
-// Click event for starting the game
-
-
-
 
 
 // Exit game
 
 const exitGame = () => {
-    container.style.display = "none";
-    showResults.innerHTML += `<p>${userAnswers}</p>`;
-    showResults.innerHTML += `<p>${key}</p>`;
+    wrapper.classList.add('hide')
+    userAnswers.forEach(answer => {
+        showResults.innerHTML += `
+        <li class="d-flex justify-content-center">Your Answers: ${answer}</li>
+        `;
+    });
+    key.forEach(student => {
+        showResults.innerHTML += `
+        <li class="d-flex justify-content-center">Correct answers: ${student.name} <img src="${student.image}"></li>
+        `;
+    });
 };
 
 
 /**
  * Todo innan inlämning:
- * Refactorera koden, ingen kod ska upprepas i onödan
+ * Refaktorera koden, ingen kod ska upprepas i onödan
  * Lägga in img-element i HTML, och istället pusha in en source genom playGame()
  * Gå igenom och ta bort variabler som ej används
  * Snygg display av jämförelse mellan vad användare svarat och facit
