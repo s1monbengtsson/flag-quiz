@@ -12,12 +12,17 @@ const results = document.querySelector('#results');
 const userAnswersEl = document.querySelector('#userAnswers');
 const keyEl = document.querySelector('#key');
 const playAgainEl = document.querySelector('#playAgain');
+const correctAnswersEl = document.querySelector('#correctAnswers');
+const wrongAnswersEl = document.querySelector('#wrongAnswers');
 
 // Variable that stores the user's answers
 let userAnswers = [];
 
 // Varible that stores the correct answer
 let key = [];
+
+// Variable for storing the right answer
+let correctStudent;
 
 // Array for storing only student names
 let studentNames = [];
@@ -28,7 +33,12 @@ let roundCounter = 1;
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
 
-let correctStudent;
+// Variable that keeps track of number of correct answers
+let correctAnswers = [];
+
+let guesses = 0;
+
+
 
 
 // Fisher-Yates algorithm for shuffling array
@@ -41,54 +51,9 @@ const shuffleStudents = (array) => {
     };
 };
 
-// add click events to show number of rounds depending on what user picks
-startGame.addEventListener('click', e => {
 
-    // Checks if the click happened on a button, and runs if so was
-    if (e.target.tagName === "BUTTON") {
-
-        // Sets the number of rounds to play to the same number as the pressed button
-        let roundsToPlay = Number(e.target.innerText);
-        console.log("rounds to play:", roundsToPlay);
-
-        // run playGame() function to start game
-        playGame();
-
-        // Sets the round counter and rounds to play and prints to DOM
-        questionCounterEl.innerText = `Question: ${roundCounter}/`;
-        roundCounterEl.innerText = `${roundsToPlay}`;
-
-
-        // Adding eventlistener to run playGame() once user has answered a question
-        answersEl.addEventListener('click', e => {
-
-            // When set number of rounds are played, exitGame() will run.
-            if (roundCounter === roundsToPlay) {
-                // push the last guess to userAnswers before exiting game
-                userAnswers.push(e.target.textContent);
-                console.log('exiting game');
-                exitGame();
-            };
-
-            // Checks if the click happend on a button, and runs if so was
-            if (e.target.tagName === "BUTTON") {
-
-                playGame();
-
-                // Updates the round counter for each round
-                questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
-                roundCounter++;
-
-                // pushes the guess to a new array for later display
-                userAnswers.push(e.target.textContent);
-            };
-        });
-    };
-});
-
-
-// Function that prints HTML when game is active
-const playGame = (e) => {
+// Function for game
+const playGame = () => {
 
     // Empty question and answer before every run
     pictureEl.innerHTML = '';
@@ -104,18 +69,17 @@ const playGame = (e) => {
     const slicedStudents = shuffledStudents.slice(0, 4);
     // console.log('sliced students, before shuffling', slicedStudents);
 
-    // variable for the right answer, and sets the image on display
-    let correctStudent = shuffledStudents[0];
+    // variable for the right answer
+    correctStudent = shuffledStudents[0];
     key.push(correctStudent);
     console.log("Keys:", key);
-
 
     // Displays image of the student to guess
     pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
 
     // Removed the student that has been displayed!
-    console.log("removed:", shuffledStudents.shift());
-    console.log(shuffledStudents);
+    shuffledStudents.shift();
+
 
 
     // Shuffle the sliced array once again to make the game more randomized
@@ -124,7 +88,7 @@ const playGame = (e) => {
 
     // Creating new array that only contains students name
     studentNames = slicedStudents.map(student => student.name);
-    console.log('studentNames:', studentNames);
+    // console.log('studentNames:', studentNames);
 
     // Print options to DOM
     studentNames.forEach(student => {
@@ -138,38 +102,125 @@ const playGame = (e) => {
 };
 
 
+// Function for correct answers
+const correctChoice = student => {
+
+    // pushes the answer into empty array 
+    userAnswers.push(student)
+    correctAnswers.push(student)
+
+    answersEl.addEventListener('click', e => {
+        e.target.innerText += `✅`
+    })
+
+    // Increments correctAnswers by 1 each time user gives correct answer
+    guesses++;
+    console.log(correctAnswers);
+    playGame();
+
+};
+
+
+// Function for incorrect answers
+const incorrectChoice = student => {
+
+    // pushes the answer into empty array 
+    userAnswers.push(student)
+
+    answersEl.addEventListener('click', e => {
+        e.target.innerText += `❌`
+    })
+
+    guesses++;
+    playGame();
+};
+
+
+// add click events to show number of rounds depending on what user picks
+startGame.addEventListener('click', e => {
+
+    // Checks if the click happened on a button, and runs if so was
+    if (e.target.tagName === "BUTTON") {
+
+
+
+        // run playGame() function to start game
+        playGame();
+
+        // Sets the number of rounds to play to the same number as the pressed button
+        let roundsToPlay = Number(e.target.innerText);
+        console.log("rounds to play:", roundsToPlay);
+
+        // Sets the round counter and rounds to play and prints to DOM
+        questionCounterEl.innerText = `Question: ${roundCounter}/`;
+        roundCounterEl.innerText = `${roundsToPlay}`;
+
+
+
+
+        // Adding eventlistener to run playGame() once user has answered a question
+        answersEl.addEventListener('click', e => {
+
+
+            // Copying value from correctStudent to use in if statement
+            let student = correctStudent;
+
+            // Checks if answer was correct
+            if (e.target.innerText === student.name) {
+                correctChoice(student);
+            } else {
+                incorrectChoice(student);
+
+            }
+            // Checks if the click happend on a button, and runs if so was
+            if (e.target.tagName === "BUTTON") {
+
+                // Updates the round counter for each round
+                questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
+                roundCounter++;
+            };
+
+            // When set number of rounds are played, exitGame() will run.
+            if (guesses === roundsToPlay) {
+                // push the last guess to userAnswers before exiting game
+                // userAnswers.push(e.target.textContent);
+                console.log('exiting game');
+                exitGame();
+            };
+            console.log("guesses", guesses);
+            console.log(correctAnswers);
+
+
+        });
+    };
+});
+
+
 // Exit game
 
 const exitGame = () => {
-    wrapper.classList.add('hide')
 
-    // initializes i as 0 and the increment i by 1 each time loop runs.
-    let i = 0;
+    console.log(correctAnswers);
+    wrapper.classList.add('hide');
 
-    // 
-    // key.pop();
+    // Prints results to DOM
+    userAnswersEl.innerHTML = `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses}</h2>`
 
-    userAnswers.forEach(answer => {
-        i++
+    correctAnswers.forEach(answer => {
         userAnswersEl.innerHTML += `
-        <li class="d-flex justify-content-center mt-1 list-none">Your Answer on question ${i}: ${answer}</li>
+        <li class="d-flex justify-content-center mt-4 list-none">Correct answers: ${answer.name}✅.</li>
         `;
     });
 
-    i = 0;
-    key.forEach(student => {
-        i++;
-        keyEl.innerHTML += `
-        <li class="d-flex justify-content-center col-12 list-none">Correct answer on question ${i}: ${student.name} <img src="${student.image}" class="mx-5"style="height:100px"></li>
-        `;
-    });
-
-    playAgainEl.innerHTML = `<button class="btn btn-primary py-4 my-3">Play Again</button>`
+    playAgainEl.innerHTML = `<button class="btn btn-primary py-3">Play Again</button>`
 
     playAgainEl.addEventListener('click', () => {
         window.location.reload();
     });
 };
+
+// Starting game on refresh
+
 
 
 /**
