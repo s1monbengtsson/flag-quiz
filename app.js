@@ -169,7 +169,7 @@ startGame.addEventListener('click', e => {
             if (e.target.innerText === student.name) {
                 correctChoice(student);
             } else {
-                incorrectChoice(student);
+                incorrectChoice(e.target.innerText);
 
             }
             // Checks if the click happend on a button, and runs if so was
@@ -182,8 +182,6 @@ startGame.addEventListener('click', e => {
 
             // When set number of rounds are played, exitGame() will run.
             if (guesses === roundsToPlay) {
-                // push the last guess to userAnswers before exiting game
-                // userAnswers.push(e.target.textContent);
                 console.log('exiting game');
                 exitGame();
             };
@@ -208,7 +206,8 @@ const exitGame = () => {
 
     correctAnswers.forEach(answer => {
         userAnswersEl.innerHTML += `
-        <li class="d-flex justify-content-center mt-4 list-none">Correct answers: ${answer.name}✅.</li>
+        <li class="d-flex justify-content-center mt-4 list-none">Correct answers: ${answer.name}✅</li>
+        <img src="${answer.image}" alt="picture of the correct student" class="d-flex justify-content-center" style="height: 75px">
         `;
     });
 
