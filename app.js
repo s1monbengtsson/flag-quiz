@@ -33,16 +33,8 @@ let roundCounter = 1;
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
 
-// Variable that keeps track of number of correct answers
-let correctAnswers = [];
-
+// Variable for keeping track of guesses
 let guesses = 0;
-
-
-
-
-
-
 
 
 // Fisher-Yates algorithm for shuffling array
@@ -86,7 +78,6 @@ const playGame = () => {
     shuffledStudents.shift();
 
 
-
     // Shuffle the sliced array once again to make the game more randomized
     shuffleStudents(slicedStudents);
     // console.log('sliced students, but after shuffle', slicedStudents);
@@ -104,8 +95,6 @@ const playGame = () => {
     instructions.style.display = "none";
 
     console.log("userAnswers:", userAnswers);
-    console.log("correctAnswers:", correctAnswers);
-
 
 };
 
@@ -118,12 +107,9 @@ const correctChoice = student => {
 
     // pushes the answer into empty array 
     userAnswers.push(student)
-    correctAnswers.push(student)
-
 
     // Increments correctAnswers by 1 each time user gives correct answer
     guesses++;
-    console.log(correctAnswers);
     playGame();
 
 };
@@ -160,9 +146,6 @@ startGame.addEventListener('click', e => {
         questionCounterEl.innerText = `Question: ${roundCounter}/`;
         roundCounterEl.innerText = `${roundsToPlay}`;
 
-
-
-
         // Adding eventlistener to run playGame() once user has answered a question
         answersEl.addEventListener('click', e => {
 
@@ -171,19 +154,12 @@ startGame.addEventListener('click', e => {
                 // Copying value from correctStudent to use in if statement
                 let student = correctStudent;
 
-
-
-
                 // Checks if answer was correct
                 if (e.target.innerText === student.name) {
                     correctChoice(student);
                 } else {
                     incorrectChoice(student);
                 };
-
-
-
-
 
                 // Updates the round counter for each round
                 questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
@@ -204,13 +180,16 @@ startGame.addEventListener('click', e => {
 
 const exitGame = () => {
 
+    // Filter out and store ONLY correct answers in new variable
+    let correctAnswers = userAnswers.filter(num => num.correct === 'correct ✅');
     console.log(correctAnswers);
+
     wrapper.classList.add('hide');
 
     // calculates percentage to show in results
     let percentage = correctAnswers.length / guesses * 100;
 
-    console.log(percentage);
+
 
     // Prints results to DOM
     userAnswersEl.innerHTML = `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-warning">(${percentage}%)</span></h2>`
