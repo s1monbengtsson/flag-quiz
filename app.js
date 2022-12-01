@@ -41,6 +41,10 @@ let guesses = 0;
 
 
 
+
+
+
+
 // Fisher-Yates algorithm for shuffling array
 const shuffleStudents = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -68,6 +72,7 @@ const playGame = () => {
     // slicing students to pick from a randomized array of 4 objects
     const slicedStudents = shuffledStudents.slice(0, 4);
     // console.log('sliced students, before shuffling', slicedStudents);
+
 
     // variable for the right answer
     correctStudent = shuffledStudents[0];
@@ -99,19 +104,22 @@ const playGame = () => {
     instructions.style.display = "none";
 
     console.log("userAnswers:", userAnswers);
+    console.log("correctAnswers:", correctAnswers);
+
+
 };
 
 
 // Function for correct answers
 const correctChoice = student => {
 
+    // adds a key to array that shows if user guessed right
+    student.correct = 'correct ✅';
+
     // pushes the answer into empty array 
     userAnswers.push(student)
     correctAnswers.push(student)
 
-    answersEl.addEventListener('click', e => {
-        e.target.innerText += `✅`
-    })
 
     // Increments correctAnswers by 1 each time user gives correct answer
     guesses++;
@@ -124,12 +132,11 @@ const correctChoice = student => {
 // Function for incorrect answers
 const incorrectChoice = student => {
 
-    // pushes the answer into empty array 
-    userAnswers.push(student)
+    // adds a key to array that shows if user guessed wrong
+    student.correct = 'wrong ❌';
 
-    answersEl.addEventListener('click', e => {
-        e.target.innerText += `❌`
-    })
+    // pushes the answer into empty array 
+    userAnswers.push(student);
 
     guesses++;
     playGame();
@@ -141,8 +148,6 @@ startGame.addEventListener('click', e => {
 
     // Checks if the click happened on a button, and runs if so was
     if (e.target.tagName === "BUTTON") {
-
-
 
         // run playGame() function to start game
         playGame();
@@ -161,19 +166,24 @@ startGame.addEventListener('click', e => {
         // Adding eventlistener to run playGame() once user has answered a question
         answersEl.addEventListener('click', e => {
 
-
-            // Copying value from correctStudent to use in if statement
-            let student = correctStudent;
-
-            // Checks if answer was correct
-            if (e.target.innerText === student.name) {
-                correctChoice(student);
-            } else {
-                incorrectChoice(e.target.innerText);
-
-            }
-            // Checks if the click happend on a button, and runs if so was
             if (e.target.tagName === "BUTTON") {
+
+                // Copying value from correctStudent to use in if statement
+                let student = correctStudent;
+
+
+
+
+                // Checks if answer was correct
+                if (e.target.innerText === student.name) {
+                    correctChoice(student);
+                } else {
+                    incorrectChoice(student);
+                };
+
+
+
+
 
                 // Updates the round counter for each round
                 questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
@@ -185,10 +195,6 @@ startGame.addEventListener('click', e => {
                 console.log('exiting game');
                 exitGame();
             };
-            console.log("guesses", guesses);
-            console.log(correctAnswers);
-
-
         });
     };
 });
@@ -201,13 +207,18 @@ const exitGame = () => {
     console.log(correctAnswers);
     wrapper.classList.add('hide');
 
-    // Prints results to DOM
-    userAnswersEl.innerHTML = `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses}</h2>`
+    // calculates percentage to show in results
+    let percentage = correctAnswers.length / guesses * 100;
 
-    correctAnswers.forEach(answer => {
+    console.log(percentage);
+
+    // Prints results to DOM
+    userAnswersEl.innerHTML = `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-warning">(${percentage}%)</span></h2>`
+
+    userAnswers.forEach(answer => {
         userAnswersEl.innerHTML += `
-        <li class="d-flex justify-content-center mt-4 list-none">Correct answers: ${answer.name}✅</li>
-        <img src="${answer.image}" alt="picture of the correct student" class="d-flex justify-content-center" style="height: 75px">
+        <img src=${answer.image} alt="picture of student" style="height:150px" class=img-fluid">
+        <p class="d-flex justify-content-center pt-1 pb-5 list-none">☝ Your guess was ${answer.correct}</p>
         `;
     });
 
@@ -218,7 +229,7 @@ const exitGame = () => {
     });
 };
 
-// Starting game on refresh
+
 
 
 
@@ -231,6 +242,7 @@ const exitGame = () => {
  * Säkerställa att både map() och filter() används för VG
  * Kontrollera så spelet är responsivt och funkar i mobil
  * Om tid finns, hitta ett bättre sätt för playAgain än att refresha sidan
+ * göra ifs till ternary
  * Merge dev into main
  */
 
