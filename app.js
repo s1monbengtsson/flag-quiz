@@ -14,6 +14,7 @@ const keyEl = document.querySelector('#key');
 const playAgainEl = document.querySelector('#playAgain');
 const correctAnswersEl = document.querySelector('#correctAnswers');
 const wrongAnswersEl = document.querySelector('#wrongAnswers');
+const intro = document.querySelector('#intro');
 
 // Variable that stores the user's answers
 let userAnswers = [];
@@ -24,17 +25,20 @@ let key = [];
 // Variable for storing the right answer
 let correctStudent;
 
-// Array for storing only student names
-let studentNames = [];
-
 // counter for how many rounds has been played
-let roundCounter = 1;
+let roundCounter = 0;
 
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
 
 // Variable for keeping track of guesses
 let guesses = 0;
+
+let moreOptions = [];
+
+let shuffledStudents = [];
+
+
 
 
 // Fisher-Yates algorithm for shuffling array
@@ -56,13 +60,18 @@ const playGame = () => {
     answersEl.innerHTML = '';
 
     // Creating a copy of students 
-    const shuffledStudents = students;
+    shuffledStudents = students;
+
 
     // Shuffling objects in students to make game non-predictable
     shuffleStudents(shuffledStudents);
 
+    const studentNames = shuffledStudents.map(student => student.name);
+
+
+
     // slicing students to pick from a randomized array of 4 objects
-    const slicedStudents = shuffledStudents.slice(0, 4);
+    let slicedStudents = studentNames.slice(0, 4);
     // console.log('sliced students, before shuffling', slicedStudents);
 
 
@@ -71,11 +80,15 @@ const playGame = () => {
     key.push(correctStudent);
     console.log("Keys:", key);
 
+
+
     // Displays image of the student to guess
     pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
 
     // Removed the student that has been displayed!
     shuffledStudents.shift();
+
+    console.log("shuffled students:", shuffledStudents);
 
 
     // Shuffle the sliced array once again to make the game more randomized
@@ -83,18 +96,33 @@ const playGame = () => {
     // console.log('sliced students, but after shuffle', slicedStudents);
 
     // Creating new array that only contains students name
-    studentNames = slicedStudents.map(student => student.name);
+    // const studentNames = slicedStudents.map(student => student.name);
     // console.log('studentNames:', studentNames);
 
+    // Creating new array to use when shuffledStudents can't provide alternatives
+    moreOptions.push(correctStudent.name);
+    // console.log("more options:", moreOptions);
+
+    // Shuffle array and then slice moreOptions to only print 4 at a time
+    shuffleStudents(moreOptions);
+    const slicedMoreOptions = moreOptions.slice(0, 4);
+
     // Print options to DOM
-    studentNames.forEach(student => {
-        answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5">${student}</button>`
-    });
+    (studentNames.length > 4)
+        ? slicedStudents.forEach(name => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5">${name}</button>`
+        })
+        : slicedMoreOptions.forEach(name => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5">${name}</button>`
+        })
+
+
 
     // Hide instructions while game is active
-    instructions.style.display = "none";
+    instructions.classList.add('hide');
 
-    console.log("userAnswers:", userAnswers);
+    roundCounter++;
+
 
 };
 
@@ -103,7 +131,7 @@ const playGame = () => {
 const correctChoice = student => {
 
     // adds a key to array that shows if user guessed right
-    student.correct = 'correct ✅';
+    student.result = 'correct ✅';
 
     // pushes the answer into empty array 
     userAnswers.push(student)
@@ -119,7 +147,7 @@ const correctChoice = student => {
 const incorrectChoice = student => {
 
     // adds a key to array that shows if user guessed wrong
-    student.correct = 'wrong ❌';
+    student.result = 'wrong ❌';
 
     // pushes the answer into empty array 
     userAnswers.push(student);
@@ -162,15 +190,16 @@ startGame.addEventListener('click', e => {
                 };
 
                 // Updates the round counter for each round
-                questionCounterEl.innerText = `Question: ${roundCounter + 1} /`;
-                roundCounter++;
+                questionCounterEl.innerText = `Question: ${roundCounter} /`;
             };
 
             // When set number of rounds are played, exitGame() will run.
-            if (guesses === roundsToPlay) {
+            if (guesses === roundsToPlay || shuffledStudents.length === 0) {
                 console.log('exiting game');
                 exitGame();
             };
+            console.log(guesses);
+            console.log("You clicked on:", e.target.innerText);
         });
     };
 });
@@ -181,12 +210,12 @@ startGame.addEventListener('click', e => {
 const exitGame = () => {
 
     // Filter out and store ONLY correct answers in new variable
-    let correctAnswers = userAnswers.filter(num => num.correct === 'correct ✅');
+    let correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
     console.log(correctAnswers);
 
     wrapper.classList.add('hide');
 
-    // calculates percentage to show in results
+    // calculates percentage of right answers to show in results
     let percentage = correctAnswers.length / guesses * 100;
 
 
@@ -197,16 +226,37 @@ const exitGame = () => {
     userAnswers.forEach(answer => {
         userAnswersEl.innerHTML += `
         <img src=${answer.image} alt="picture of student" style="height:150px" class=img-fluid">
-        <p class="d-flex justify-content-center pt-1 pb-5 list-none">☝ Your guess was ${answer.correct}</p>
+        <p class="d-flex justify-content-center pt-1 pb-4 list-none">☝ Your guess was ${answer.result} It's ${answer.name}</p>
         `;
     });
 
-    playAgainEl.innerHTML = `<button class="btn btn-primary py-3">Play Again</button>`
+    // Displays a button for playing again
+    playAgainEl.innerHTML = `<button class="btn btn-primary py-3 mb-5">Play Again</button>`
 
-    playAgainEl.addEventListener('click', () => {
-        window.location.reload();
-    });
+
+
 };
+
+const playAgain = () => {
+    wrapper.classList.remove('hide');
+    results.innerHTML = '';
+    pictureEl.innerHTML = '';
+    answersEl.innerHTML = '';
+    playAgainEl.innerHTML = '';
+    roundCounterEl.innerHTML = '';
+    questionCounterEl.innerHTML = '';
+    instructions.classList.remove('hide');
+    roundCounter = 0;
+    guesses = 0;
+    correctStudent;
+
+}
+
+playAgainEl.addEventListener('click', () => {
+    playAgain();
+
+
+});
 
 
 
@@ -224,6 +274,8 @@ const exitGame = () => {
  * göra ifs till ternary
  * Merge dev into main
  */
+
+// ## För att lösa problemet med att pusha fler alternativ testa skapa en kopia av shuffledStudents fast med map(student.name)
 
 
 
