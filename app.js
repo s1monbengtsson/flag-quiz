@@ -1,6 +1,6 @@
 // Grabbing elements from DOM
 
-const startGame = document.querySelector('.game-start');
+const startGameEl = document.querySelector('.game-start');
 const instructions = document.querySelector('.instructions');
 const listEl = document.querySelector('#answer-list');
 const pictureEl = document.querySelector('#image-holder');
@@ -15,6 +15,7 @@ const playAgainEl = document.querySelector('#playAgain');
 const correctAnswersEl = document.querySelector('#correctAnswers');
 const wrongAnswersEl = document.querySelector('#wrongAnswers');
 const intro = document.querySelector('#intro');
+const btnEl = document.querySelector('.playGame');
 
 // Variable that stores the user's answers
 let userAnswers = [];
@@ -26,7 +27,7 @@ let key = [];
 let correctStudent;
 
 // counter for how many rounds has been played
-let roundCounter = 0;
+let roundCounter = 1;
 
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
@@ -37,6 +38,9 @@ let guesses = 0;
 let moreOptions = [];
 
 let shuffledStudents = [];
+
+const maxRounds = students.length;
+console.log("maxrounds:", maxRounds);
 
 
 
@@ -54,6 +58,7 @@ const shuffleStudents = (array) => {
 
 // Function for game
 const playGame = () => {
+
 
     // Empty question and answer before every run
     pictureEl.innerHTML = '';
@@ -110,21 +115,22 @@ const playGame = () => {
     // Print options to DOM
     (studentNames.length > 4)
         ? slicedStudents.forEach(name => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5">${name}</button>`
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${name}</button>`
         })
         : slicedMoreOptions.forEach(name => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5">${name}</button>`
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${name}</button>`
         })
-
-
 
     // Hide instructions while game is active
     instructions.classList.add('hide');
 
-    roundCounter++;
-
 
 };
+
+// Game initializer
+const gameInit = () => {
+    playGame();
+}
 
 
 // Function for correct answers
@@ -137,7 +143,6 @@ const correctChoice = student => {
     userAnswers.push(student)
 
     // Increments correctAnswers by 1 each time user gives correct answer
-    guesses++;
     playGame();
 
 };
@@ -152,18 +157,17 @@ const incorrectChoice = student => {
     // pushes the answer into empty array 
     userAnswers.push(student);
 
-    guesses++;
     playGame();
 };
 
 
 // add click events to show number of rounds depending on what user picks
-startGame.addEventListener('click', e => {
+startGameEl.addEventListener('click', e => {
 
     // Checks if the click happened on a button, and runs if so was
     if (e.target.tagName === "BUTTON") {
 
-        // run playGame() function to start game
+        // run playGame() function to initialize game
         playGame();
 
         // Sets the number of rounds to play to the same number as the pressed button
@@ -174,40 +178,51 @@ startGame.addEventListener('click', e => {
         questionCounterEl.innerText = `Question: ${roundCounter}/`;
         roundCounterEl.innerText = `${roundsToPlay}`;
 
-        // Adding eventlistener to run playGame() once user has answered a question
+
         answersEl.addEventListener('click', e => {
 
-            if (e.target.tagName === "BUTTON") {
-
-                // Copying value from correctStudent to use in if statement
-                let student = correctStudent;
-
-                // Checks if answer was correct
-                if (e.target.innerText === student.name) {
-                    correctChoice(student);
-                } else {
-                    incorrectChoice(student);
-                };
-
-                // Updates the round counter for each round
-                questionCounterEl.innerText = `Question: ${roundCounter} /`;
-            };
+            // increments guesses by 1 for each click
+            guesses++;
 
             // When set number of rounds are played, exitGame() will run.
-            if (guesses === roundsToPlay || shuffledStudents.length === 0) {
+            if (guesses === roundsToPlay || guesses === maxRounds) {
                 console.log('exiting game');
                 exitGame();
             };
-            console.log(guesses);
-            console.log("You clicked on:", e.target.innerText);
+
+            // Copying value from correctStudent to use in if statement
+            let student = correctStudent;
+
+            // Checks if answer was correct
+            if (e.target.innerText === student.name) {
+                correctChoice(student);
+            } else {
+                incorrectChoice(student);
+            };
+
+
+
+
+            // increments roundCounter by 1
+            roundCounter++;
+
+            // Updates the round counter for each round
+            questionCounterEl.innerText = `Question: ${roundCounter} /`;
+
         });
     };
+
 });
+
+
+
 
 
 // Exit game
 
 const exitGame = () => {
+
+
 
     // Filter out and store ONLY correct answers in new variable
     let correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
@@ -232,7 +247,6 @@ const exitGame = () => {
 
     // Displays a button for playing again
     playAgainEl.innerHTML = `<button class="btn btn-primary py-3 mb-5">Play Again</button>`
-
 
 
 };
