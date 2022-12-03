@@ -37,7 +37,6 @@ let guesses = 0;
 
 let moreOptions = [];
 
-let shuffledStudents = [];
 
 const maxRounds = students.length;
 console.log("maxrounds:", maxRounds);
@@ -55,6 +54,13 @@ const shuffleStudents = (array) => {
     };
 };
 
+const frontPage = () => {
+    startGameEl.innerHTML = `
+    <button class="btn btn-success m-2 px-4 playGame">10</button>
+    <button class="btn btn-warning m-2 px-4 playGame">20</button>
+    <button class="btn btn-danger m-2 px-4 playGame">${students.length}</button>`
+}
+
 
 // Function for game
 const playGame = () => {
@@ -65,12 +71,13 @@ const playGame = () => {
     answersEl.innerHTML = '';
 
     // Creating a copy of students 
-    shuffledStudents = students;
+    const shuffledStudents = students;
 
 
     // Shuffling objects in students to make game non-predictable
     shuffleStudents(shuffledStudents);
 
+    // Mapping out only the name to then output to DOM
     const studentNames = shuffledStudents.map(student => student.name);
 
 
@@ -260,18 +267,19 @@ const playAgain = () => {
     roundCounterEl.innerHTML = '';
     questionCounterEl.innerHTML = '';
     instructions.classList.remove('hide');
-    roundCounter = 0;
+    roundCounter = 1;
     guesses = 0;
-    correctStudent;
-
-}
+    key = [];
+    userAnswers = [];
+    moreOptions = [];
+};
 
 playAgainEl.addEventListener('click', () => {
     playAgain();
-
-
 });
 
+// Showing front page where user picks difficulty;
+frontPage();
 
 
 
