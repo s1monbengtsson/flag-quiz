@@ -90,7 +90,7 @@ const playGame = () => {
     // variable for the right answer
     correctStudent = shuffledStudents[0];
     key.push(correctStudent);
-    console.log("Keys:", key);
+
 
 
 
@@ -134,10 +134,6 @@ const playGame = () => {
 
 };
 
-// Game initializer
-const gameInit = () => {
-    playGame();
-}
 
 
 // Function for correct answers
@@ -148,9 +144,8 @@ const correctChoice = student => {
 
     // pushes the answer into empty array 
     userAnswers.push(student)
+    console.log("userAnswers:", userAnswers)
 
-    // Increments correctAnswers by 1 each time user gives correct answer
-    playGame();
 
 };
 
@@ -163,8 +158,8 @@ const incorrectChoice = student => {
 
     // pushes the answer into empty array 
     userAnswers.push(student);
+    console.log("userAnswers:", userAnswers)
 
-    playGame();
 };
 
 
@@ -190,12 +185,7 @@ startGameEl.addEventListener('click', e => {
 
             // increments guesses by 1 for each click
             guesses++;
-
-            // When set number of rounds are played, exitGame() will run.
-            if (guesses === roundsToPlay || guesses === maxRounds) {
-                console.log('exiting game');
-                exitGame();
-            };
+            console.log("guesses", guesses);
 
             // Copying value from correctStudent to use in if statement
             let student = correctStudent;
@@ -208,13 +198,21 @@ startGameEl.addEventListener('click', e => {
             };
 
 
-
-
             // increments roundCounter by 1
             roundCounter++;
 
             // Updates the round counter for each round
             questionCounterEl.innerText = `Question: ${roundCounter} /`;
+
+            // When set number of rounds are played, exitGame() will run.
+            if (guesses === roundsToPlay) {
+                console.log('exiting game');
+                exitGame();
+            } else {
+                playGame();
+            }
+
+
 
         });
     };
@@ -238,9 +236,7 @@ const exitGame = () => {
     wrapper.classList.add('hide');
 
     // calculates percentage of right answers to show in results
-    let percentage = correctAnswers.length / guesses * 100;
-
-
+    let percentage = Math.round(correctAnswers.length / guesses * 100);
 
     // Prints results to DOM
     userAnswersEl.innerHTML = `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-warning">(${percentage}%)</span></h2>`
