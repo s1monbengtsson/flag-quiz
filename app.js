@@ -26,6 +26,9 @@ let key = [];
 // Variable for storing the right answer
 let correctStudent;
 
+// Array for storing used students
+let usedStudents = [];
+
 // counter for how many rounds has been played
 let roundCounter = 1;
 
@@ -65,14 +68,13 @@ const frontPage = () => {
 // Function for game
 const playGame = () => {
 
-
     // Empty question and answer before every run
     pictureEl.innerHTML = '';
     answersEl.innerHTML = '';
 
-    // Creating a copy of students 
-    const shuffledStudents = students;
 
+    // Creating a copy of students 
+    const shuffledStudents = students
 
     // Shuffling objects in students to make game non-predictable
     shuffleStudents(shuffledStudents);
@@ -80,40 +82,33 @@ const playGame = () => {
     // Mapping out only the name to then output to DOM
     const studentNames = shuffledStudents.map(student => student.name);
 
-
-
     // slicing students to pick from a randomized array of 4 objects
     let slicedStudents = studentNames.slice(0, 4);
-    // console.log('sliced students, before shuffling', slicedStudents);
-
 
     // variable for the right answer
-    correctStudent = shuffledStudents[0];
+    correctStudent = shuffledStudents.find(student => !usedStudents.includes(student));
     key.push(correctStudent);
+    usedStudents.push(correctStudent);
 
+    console.log("used students:", usedStudents);
 
-
+    console.log("shuffled students:", shuffledStudents);
 
     // Displays image of the student to guess
     pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
 
-    // Removed the student that has been displayed!
-    shuffledStudents.shift();
-
-    console.log("shuffled students:", shuffledStudents);
-
+    // // Removed the student that has been displayed!
+    // shuffledStudents.shift();
+    // console.log("Students org:", students);
+    // console.log("shuffled students:", shuffledStudents);
 
     // Shuffle the sliced array once again to make the game more randomized
     shuffleStudents(slicedStudents);
     // console.log('sliced students, but after shuffle', slicedStudents);
 
-    // Creating new array that only contains students name
-    // const studentNames = slicedStudents.map(student => student.name);
-    // console.log('studentNames:', studentNames);
-
     // Creating new array to use when shuffledStudents can't provide alternatives
     moreOptions.push(correctStudent.name);
-    // console.log("more options:", moreOptions);
+
 
     // Shuffle array and then slice moreOptions to only print 4 at a time
     shuffleStudents(moreOptions);
@@ -211,9 +206,6 @@ startGameEl.addEventListener('click', e => {
             } else {
                 playGame();
             }
-
-
-
         });
     };
 
@@ -230,7 +222,7 @@ const exitGame = () => {
 
 
     // Filter out and store ONLY correct answers in new variable
-    let correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
+    const correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
     console.log(correctAnswers);
 
     wrapper.classList.add('hide');
@@ -268,6 +260,8 @@ const playAgain = () => {
     key = [];
     userAnswers = [];
     moreOptions = [];
+    usedStudents = [];
+
 };
 
 playAgainEl.addEventListener('click', () => {
@@ -285,8 +279,7 @@ frontPage();
  * Refaktorera koden, ingen kod ska upprepas i onödan
  * Lägga in img-element i HTML, och istället pusha in en source genom playGame()
  * Gå igenom och ta bort variabler som ej används
- * Snygg display av jämförelse mellan vad användare svarat och facit
- * Säkerställa att både map() och filter() används för VG
+
  * Kontrollera så spelet är responsivt och funkar i mobil
  * Om tid finns, hitta ett bättre sätt för playAgain än att refresha sidan
  * göra ifs till ternary
