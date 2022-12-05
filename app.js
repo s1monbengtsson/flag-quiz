@@ -1,44 +1,32 @@
 // Grabbing elements from DOM
-
 const startGameEl = document.querySelector('.game-start');
 const instructions = document.querySelector('.instructions');
-const listEl = document.querySelector('#answer-list');
 const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('.answers');
-const questionCounterEl = document.querySelector('#question-counter');
-const roundCounterEl = document.querySelector('#rounds-to-play');
+const roundCounterEl = document.querySelector('#roundCounter');
 const wrapper = document.querySelector('#wrapper');
 const results = document.querySelector('#results');
-const userAnswersEl = document.querySelector('#userAnswers');
 const playAgainEl = document.querySelector('#playAgain');
-const intro = document.querySelector('#intro');
-const btnEl = document.querySelector('.playGame');
 const highscoreEl = document.querySelector('#highscore');
-const resultsWrapperEl = document.querySelector('#resultsWrapper');
 
-// Variable that stores the user's answers
+
+// stores user's answers after each round
 let userAnswers = [];
 
-// Variable for storing the right answer
+// stores the right answer for each round
 let correctStudent;
 
-// Array for storing used students
+// stores the students that has been on display
 let usedStudents = [];
-
 
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
 
-// Variable for keeping track of guesses
+// keeps track of number of guesses
 let guesses = 0;
 
+// keeps track of highscore
 let highscore = 0;
-
-console.log("Guesses:", guesses)
-
-
-
-
 
 
 // Fisher-Yates algorithm for shuffling array
@@ -51,74 +39,62 @@ const shuffleStudents = (array) => {
     };
 };
 
-// Displays buttons for hoe many students to guess on
+
+// displays buttons for how many students to guess on
 const frontPage = () => {
     startGameEl.innerHTML = `
     <button class="btn btn-success m-2 px-4 playGame">10</button>
     <button class="btn btn-warning m-2 px-4 playGame">20</button>
-    <button class="btn btn-danger m-2 px-4 playGame">${students.length}</button>`
-}
+    <button class="btn btn-danger m-2 px-4 playGame">${students.length}</button>`;
+};
 
 
 // Function for game
 const playGame = () => {
 
-    // Empty question and answer before every run
+    // empty question and answer before every run
     pictureEl.innerHTML = '';
     answersEl.innerHTML = '';
 
+    // creating a copy of students 
+    const shuffledStudents = students;
 
-    // Creating a copy of students 
-    const shuffledStudents = students
-
-    // Shuffling objects in students to make game non-predictable
+    // shuffling objects in students to make game non-predictable
     shuffleStudents(shuffledStudents);
 
-    // Mapping out only the name to then output to DOM
+    // mapping out only the name of the students
     const studentNames = shuffledStudents.map(student => student.name);
 
-    // slicing students to pick from a randomized array of 4 objects
+    // slicing students to pick from a randomized array of 4 names
     let slicedStudents = studentNames.slice(0, 4);
 
     // variable for the right answer
     correctStudent = shuffledStudents.find(student => !usedStudents.includes(student));
     usedStudents.push(correctStudent);
 
-    console.log("used students:", usedStudents);
+    // displays image of the student to guess
+    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`;
 
-    console.log("shuffled students:", shuffledStudents);
-
-    // Displays image of the student to guess
-    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
-
-    // Shuffle the sliced array once again to make the game more randomized
+    // shuffles the sliced array once again before printing answer options to DOM
     shuffleStudents(slicedStudents);
 
-    // Print options to DOM
+    // prints options to DOM
     slicedStudents.forEach(name => {
         answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${name}</button>`
     });
-
-    // Hide instructions while game is active
-    instructions.classList.add('hide');
 
 
 };
 
 
-
-
-// Function for correct answers
+// function for correct answers
 const correctChoice = student => {
 
     // adds a key to array that shows if user guessed right
     student.result = 'correct ✅';
 
-    // pushes the answer into empty array 
+    // pushes the answer into an empty array 
     userAnswers.push(student)
-    console.log("userAnswers:", userAnswers)
-
-
 };
 
 
@@ -128,30 +104,30 @@ const incorrectChoice = student => {
     // adds a key to array that shows if user guessed wrong
     student.result = 'wrong ❌';
 
-    // pushes the answer into empty array 
+    // pushes the answer into an empty array 
     userAnswers.push(student);
-    console.log("userAnswers:", userAnswers)
-
 };
 
 
-// add click events to show number of rounds depending on what user picks
+// adds a click events to show number of rounds depending on what user picks
 startGameEl.addEventListener('click', e => {
 
-    // Checks if the click happened on a button, and runs if so was
+    // checks if the click happened on a button, and runs if so was
     if (e.target.tagName === "BUTTON") {
 
-        // run playGame() function to initialize game
+        // hide instructions while game is active
+        instructions.classList.add('hide');
+
+        // invoke playGame() function to initialize game
         playGame();
 
-        // Sets the number of rounds to play to the same number as the pressed button
+        // sets the number of rounds to play to the same number as the pressed button
         roundsToPlay = Number(e.target.innerText);
-        console.log("rounds to play:", roundsToPlay);
 
-        // Sets the round counter and rounds to play and prints to DOM
-        questionCounterEl.innerText = `Question: ${guesses + 1}/`;
-        roundCounterEl.innerText = `${roundsToPlay}`;
-
+        // prints to DOM and updates question counter
+        roundCounterEl.innerHTML = `
+        <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
+        `;
     };
 });
 
@@ -159,58 +135,57 @@ startGameEl.addEventListener('click', e => {
 answersEl.addEventListener('click', e => {
 
     if (e.target.tagName === "BUTTON") {
+
         // increments guesses by 1 for each click
         guesses++;
-        console.log("guesses", guesses);
-
-        // Copying value from correctStudent to use in if statement
-        let student = correctStudent;
 
         // Checks if answer was correct
-        if (e.target.innerText === student.name) {
-            correctChoice(student);
+        if (e.target.innerText === correctStudent.name) {
+            correctChoice(correctStudent);
         } else {
-            incorrectChoice(student);
+            incorrectChoice(correctStudent);
         };
 
-        // Updates the round counter for each round
-        questionCounterEl.innerText = `Question: ${guesses + 1} /`;
+        // updates the round counter for each round
+        roundCounterEl.innerHTML = `
+        <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
+        `;
 
-        // When set number of rounds are played, exitGame() will run.
+        // when a set number of rounds are played, exitGame() will be invoked.
         if (guesses === roundsToPlay) {
-            console.log('exiting game');
             exitGame();
         } else {
             playGame();
-        }
+        };
     };
 });
 
 
-
-// Exit game
-
+// function for game exit
 const exitGame = () => {
 
-    // Filter out and store ONLY correct answers in new variable
-    const correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
-    console.log(correctAnswers);
-
+    // hides everything except page that shows results
     wrapper.classList.add('hide');
 
-    // calculates percentage of right answers to show in results
+    // filters out and store ONLY correct answers in new variable
+    const correctAnswers = userAnswers.filter(answer => answer.result === 'correct ✅');
+
+    // calculates percentage of correct answers to show in results
     let percentage = Math.round(correctAnswers.length / guesses * 100);
 
-    // Prints results to DOM
+    // prints results to DOM
     results.innerHTML =
         `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-warning">(${percentage}%)</span></h2>`
-    // Prints out highscore
+
+    // checks for new highscore and prints result to DOM
     if (correctAnswers.length > highscore) {
         highscore = correctAnswers.length;
         highscoreEl.innerText = `New Highscore: ${highscore}`;
     } else {
         highscoreEl.innerText = `Current Highscore: ${highscore}`;
     };
+
+    // prints each answered question to DOM and shows if user guesses right or wrong. Also shows correct answer
     userAnswers.forEach(answer => {
         results.innerHTML += `
         <img src=${answer.image} alt="picture of student" style="height:150px" class=img-fluid">
@@ -218,15 +193,15 @@ const exitGame = () => {
         `;
     });
 
-
-
-    // Displays a button for playing again
+    // displays a button for playing again
     playAgainEl.innerHTML = `<button class="btn btn-primary py-3 mb-5">Play Again</button>`
 
+    // hides highscoreEl from being displayed
     highscoreEl.classList.remove('hide');
-
 };
 
+
+// function for playing again. Empties HTML, counters and arrays
 const playAgain = () => {
     wrapper.classList.remove('hide');
     results.innerHTML = '';
@@ -234,21 +209,21 @@ const playAgain = () => {
     answersEl.innerHTML = '';
     playAgainEl.innerHTML = '';
     roundCounterEl.innerHTML = '';
-    questionCounterEl.innerHTML = '';
     instructions.classList.remove('hide');
     highscoreEl.classList.add('hide');
     guesses = 0;
     userAnswers = [];
-    moreOptions = [];
     usedStudents = [];
-
 };
 
-playAgainEl.addEventListener('click', () => {
-    playAgain();
+// invokes playAgain function once playAgainEl is clicked
+playAgainEl.addEventListener('click', (e) => {
+    if (e.target.tagName === "BUTTON") {
+        playAgain();
+    };
 });
 
-// Showing front page where user picks difficulty;
+// shows front page where user picks difficulty;
 frontPage();
 
 
