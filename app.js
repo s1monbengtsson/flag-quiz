@@ -28,6 +28,13 @@ let guesses = 0;
 // keeps track of highscore
 let highscore = 0;
 
+// stores available questions
+let options = [];
+
+// stores available questions and will be used when `options` can't provide
+let moreOptions = [];
+
+
 
 // Fisher-Yates algorithm for shuffling array
 const shuffleStudents = (array) => {
@@ -56,35 +63,68 @@ const playGame = () => {
     pictureEl.innerHTML = '';
     answersEl.innerHTML = '';
 
-    // creating a copy of students 
-    const shuffledStudents = students;
+    // copy of students
+    let shuffledStudents = students;
 
-    // shuffling objects in students to make game non-predictable
+    // shuffling array shuffledStudents
     shuffleStudents(shuffledStudents);
 
-    // mapping out only the name of the students
-    const studentNames = shuffledStudents.map(student => student.name);
 
-    // slicing students to pick from a randomized array of 4 names
-    let slicedStudents = studentNames.slice(0, 4);
+    // filters out all shuffledStudents that does not appear in `usedStudent` and stores this in new variable
+    correctStudent = shuffledStudents.filter(student => !usedStudents.includes(student));
 
-    // variable for the right answer
-    correctStudent = shuffledStudents.find(student => !usedStudents.includes(student));
+    // sets correctStudent to the first index of the returned, filtered array
+    correctStudent = correctStudent[0];
+
+    // pushes the current `correctStudent` into usedStudent to avoid displaying again
     usedStudents.push(correctStudent);
 
-    // displays image of the student to guess
-    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`;
+    // pushes correctStudent to back-up options
+    moreOptions.push(correctStudent);
 
-    // shuffles the sliced array once again before printing answer options to DOM
-    shuffleStudents(slicedStudents);
+    // displays image of correct student
+    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
 
-    // prints options to DOM
-    slicedStudents.forEach(name => {
-        answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${name}</button>`
-    });
+    // sets an array of incorrect students to display as answer options
+    let wrongStudents = students.filter(student => !usedStudents.includes(student));
 
+
+    // picks 3 wrong students and 1 correct
+    options = wrongStudents.slice(0, 3);
+    options.push(correctStudent);
+
+    // sets array that can provide more options once needed
+    let moreOptionsSlice = moreOptions.slice(0, 3);
+    moreOptionsSlice.push(correctStudent);
+
+    // shuffling options to be presented
+    shuffleStudents(options);
+    shuffleStudents(moreOptions);
+
+
+    // chooses which array to choose options from
+    (options.length < 4)
+        ? moreOptionsSlice.forEach(student => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+        })
+        : options.forEach(student => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+        });
 
 };
+
+
+
+
+
+
+
+
+// studentNames.forEach(student => {
+//     answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student}</button>`
+// })
+
+
 
 
 // function for correct answers
