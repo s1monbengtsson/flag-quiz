@@ -1,8 +1,8 @@
 // Grabbing elements from DOM
-const startGameEl = document.querySelector('.game-start');
-const instructions = document.querySelector('.instructions');
+const startGameEl = document.querySelector('#game-start');
+const instructions = document.querySelector('#instructions');
 const pictureEl = document.querySelector('#image-holder');
-const answersEl = document.querySelector('.answers');
+const answersEl = document.querySelector('#answers');
 const roundCounterEl = document.querySelector('#roundCounter');
 const wrapper = document.querySelector('#wrapper');
 const results = document.querySelector('#results');
