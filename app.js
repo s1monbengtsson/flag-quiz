@@ -115,18 +115,6 @@ const playGame = () => {
 
 
 
-
-
-
-
-
-// studentNames.forEach(student => {
-//     answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student}</button>`
-// })
-
-
-
-
 // function for correct answers
 const correctChoice = student => {
 
@@ -147,7 +135,6 @@ const incorrectChoice = student => {
     // pushes the answer into an empty array 
     userAnswers.push(student);
 };
-
 
 // adds a click events to show number of rounds depending on what user picks
 startGameEl.addEventListener('click', e => {
