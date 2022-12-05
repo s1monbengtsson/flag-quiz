@@ -99,20 +99,25 @@ const playGame = () => {
 
     // shuffling options to be presented
     shuffleStudents(options);
-    shuffleStudents(moreOptions);
+    shuffleStudents(moreOptionsSlice);
+
+    // mapping out names of students
+    let optionsNames = options.map(student => student.name);
+    let moreOptionsNames = moreOptionsSlice.map(student => student.name);
+
+
 
 
     // chooses which array to choose options from
-    (options.length < 4)
-        ? moreOptionsSlice.forEach(student => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+    (optionsNames.length < 4)
+        ? moreOptionsNames.forEach(student => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student}</button>`
         })
-        : options.forEach(student => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+        : optionsNames.forEach(student => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student}</button>`
         });
 
 };
-
 
 
 // function for correct answers
