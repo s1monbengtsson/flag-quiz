@@ -50,9 +50,9 @@ const shuffleFlags = (array) => {
 // displays buttons for how many flags to guess on
 const frontPage = () => {
     startGameEl.innerHTML = `
-    <button class="btn btn-success m-2 px-4 playGame">10</button>
-    <button class="btn btn-warning m-2 px-4 playGame">20</button>
-    <button class="btn btn-danger m-2 px-4 playGame">${flags.length}</button>`;
+    <button class="playGame rounds-btn">10</button>
+    <button class="playGame rounds-btn">20</button>
+    <button class="playGame rounds-btn">${flags.length}</button>`;
 };
 
 
@@ -83,7 +83,7 @@ const playGame = () => {
     moreOptions.push(correctFlag);
 
     // displays image of correct Flag
-    pictureEl.innerHTML = `<img src=${correctFlag.image} class="img-fluid">`
+    pictureEl.innerHTML = `<img src=${correctFlag.image} class="img-fluid" id="flag-img">`
 
     // sets an array of incorrect Flags to display as answer options
     let wrongFlags = flags.filter(flag => !usedFlags.includes(flag));
@@ -105,10 +105,10 @@ const playGame = () => {
     // chooses which array to choose options from
     (options.length < 4)
         ? moreOptionsSlice.forEach(flag => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${flag.country}</button>`
+            answersEl.innerHTML += `<button class="rounds-btn col-5 playGame" id="answer-btn">${flag.country}</button>`
         })
         : options.forEach(flag => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${flag.country}</button>`
+            answersEl.innerHTML += `<button class="rounds-btn col-5 playGame" id="answer-btn">${flag.country}</button>`
         });
 
 };
@@ -163,27 +163,40 @@ answersEl.addEventListener('click', e => {
 
     if (e.target.tagName === "BUTTON") {
 
+        const buttons = document.querySelectorAll("#answer-btn")
+
+        // once answer is made, set all buttons to disabled to prevent user from spamming
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].setAttribute('disabled', 'disabled')
+        }
+
         // increments guesses by 1 for each click
         guesses++;
 
         // Checks if answer was correct
         if (e.target.innerText === correctFlag.country) {
             correctChoice(correctFlag);
+            e.target.innerHTML += '✅'
+            e.target.classList.add('correct')
         } else {
             incorrectChoice(correctFlag);
+            e.target.innerHTML += '❌'
+            e.target.classList.add('wrong')
+
         };
 
-        // updates the round counter for each round
-        roundCounterEl.innerHTML = `
-        <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
-        `;
-
-        // when a set number of rounds are played, exitGame() will be invoked.
-        if (guesses === roundsToPlay) {
-            exitGame();
-        } else {
-            playGame();
-        };
+        setTimeout(() => {
+            // updates the round counter for each round
+            roundCounterEl.innerHTML = `
+                <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
+            `;
+            // when a set number of rounds are played, exitGame() will be invoked.
+            if (guesses === roundsToPlay) {
+                exitGame();
+            } else {
+                playGame();
+            };
+        }, 1000)
     };
 });
 
@@ -200,9 +213,17 @@ const exitGame = () => {
     // calculates percentage of correct answers to show in results
     let percentage = Math.round(correctAnswers.length / guesses * 100);
 
-    // prints results to DOM
-    results.innerHTML =
-        `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-warning">(${percentage}%)</span></h2>`
+    if (percentage >= 80) {
+        // prints results to DOM
+        results.innerHTML =
+            `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-green">(${percentage}%)</span></h2>`
+    } else {
+        // prints results to DOM
+        results.innerHTML =
+            `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-red">(${percentage}%)</span></h2>`
+    }
+
+
 
     // checks for new highscore and prints result to DOM
     if (correctAnswers.length > highscore) {
@@ -215,7 +236,7 @@ const exitGame = () => {
     // prints each answered question to DOM and shows if user guesses right or wrong. Also shows correct answer
     userAnswers.forEach(answer => {
         results.innerHTML += `
-        <img src=${answer.image} alt="picture of student" style="height: 350px"  class=img-fluid">
+        <img src=${answer.image} alt="flag to guess" class="img-fluid">
         <p class="d-flex justify-content-center pt-1 pb-4 list-none">☝ Your guess was ${answer.result} It's ${answer.country}</p>
         `;
     });
