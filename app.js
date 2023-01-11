@@ -14,10 +14,10 @@ const highscoreEl = document.querySelector('#highscore');
 let userAnswers = [];
 
 // stores the right answer for each round
-let correctStudent;
+let correctFlag;
 
-// stores the students that has been on display
-let usedStudents = [];
+// stores the flags that has been on display
+let usedFlags = [];
 
 // sets the number of rounds to play depending on choice of user
 let roundsToPlay;
@@ -37,7 +37,7 @@ let moreOptions = [];
 
 
 // Fisher-Yates algorithm for shuffling array
-const shuffleStudents = (array) => {
+const shuffleFlags = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         const temp = array[i];
@@ -47,12 +47,12 @@ const shuffleStudents = (array) => {
 };
 
 
-// displays buttons for how many students to guess on
+// displays buttons for how many flags to guess on
 const frontPage = () => {
     startGameEl.innerHTML = `
     <button class="btn btn-success m-2 px-4 playGame">10</button>
     <button class="btn btn-warning m-2 px-4 playGame">20</button>
-    <button class="btn btn-danger m-2 px-4 playGame">${students.length}</button>`;
+    <button class="btn btn-danger m-2 px-4 playGame">${flags.length}</button>`;
 };
 
 
@@ -64,51 +64,51 @@ const playGame = () => {
     answersEl.innerHTML = '';
 
     // copy of students
-    let shuffledStudents = students;
+    let shuffledFlags = flags;
 
-    // shuffling array shuffledStudents
-    shuffleStudents(shuffledStudents);
-
-
-    // filters out all shuffledStudents that does not appear in `usedStudent` and stores this in new variable
-    correctStudent = shuffledStudents.filter(student => !usedStudents.includes(student));
-
-    // sets correctStudent to the first index of the returned, filtered array
-    correctStudent = correctStudent[0];
-
-    // pushes the current `correctStudent` into usedStudent to avoid displaying again
-    usedStudents.push(correctStudent);
-
-    // pushes correctStudent to back-up options
-    moreOptions.push(correctStudent);
-
-    // displays image of correct student
-    pictureEl.innerHTML = `<img src=${correctStudent.image} class="img-fluid">`
-
-    // sets an array of incorrect students to display as answer options
-    let wrongStudents = students.filter(student => !usedStudents.includes(student));
+    // shuffling array shuffledFlags
+    shuffleFlags(shuffledFlags);
 
 
-    // picks 3 wrong students and 1 correct
-    options = wrongStudents.slice(0, 3);
-    options.push(correctStudent);
+    // filters out all shuffledFlags that does not appear in `usedFlags` and stores this in new variable
+    correctFlag = shuffledFlags.filter(flag => !usedFlags.includes(flag));
+
+    // sets correctFlag to the first index of the returned, filtered array
+    correctFlag = correctFlag[0];
+
+    // pushes the current `correctFlag` into usedFlag to avoid displaying again
+    usedFlags.push(correctFlag);
+
+    // pushes correctFlag to back-up options
+    moreOptions.push(correctFlag);
+
+    // displays image of correct Flag
+    pictureEl.innerHTML = `<img src=${correctFlag.image} class="img-fluid">`
+
+    // sets an array of incorrect Flags to display as answer options
+    let wrongFlags = flags.filter(flag => !usedFlags.includes(flag));
+
+
+    // picks 3 wrong flags and 1 correct
+    options = wrongFlags.slice(0, 3);
+    options.push(correctFlag);
 
     // sets array that can provide more options once needed
     let moreOptionsSlice = moreOptions.slice(0, 3);
-    moreOptionsSlice.push(correctStudent);
+    moreOptionsSlice.push(correctFlag);
 
     // shuffling options to be presented
-    shuffleStudents(options);
-    shuffleStudents(moreOptions);
+    shuffleFlags(options);
+    shuffleFlags(moreOptions);
 
 
     // chooses which array to choose options from
     (options.length < 4)
-        ? moreOptionsSlice.forEach(student => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+        ? moreOptionsSlice.forEach(flag => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${flag.country}</button>`
         })
-        : options.forEach(student => {
-            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${student.name}</button>`
+        : options.forEach(flag => {
+            answersEl.innerHTML += `<button class="btn btn-warning m-2 p-3 col-5 playGame">${flag.country}</button>`
         });
 
 };
@@ -116,24 +116,24 @@ const playGame = () => {
 
 
 // function for correct answers
-const correctChoice = student => {
+const correctChoice = flag => {
 
     // adds a key to array that shows if user guessed right
-    student.result = 'correct ✅';
+    flag.result = 'correct ✅';
 
     // pushes the answer into an empty array 
-    userAnswers.push(student)
+    userAnswers.push(flag)
 };
 
 
 // Function for incorrect answers
-const incorrectChoice = student => {
+const incorrectChoice = flag => {
 
     // adds a key to array that shows if user guessed wrong
-    student.result = 'wrong ❌';
+    flag.result = 'wrong ❌';
 
     // pushes the answer into an empty array 
-    userAnswers.push(student);
+    userAnswers.push(flag);
 };
 
 // adds a click events to show number of rounds depending on what user picks
@@ -167,10 +167,10 @@ answersEl.addEventListener('click', e => {
         guesses++;
 
         // Checks if answer was correct
-        if (e.target.innerText === correctStudent.name) {
-            correctChoice(correctStudent);
+        if (e.target.innerText === correctFlag.country) {
+            correctChoice(correctFlag);
         } else {
-            incorrectChoice(correctStudent);
+            incorrectChoice(correctFlag);
         };
 
         // updates the round counter for each round
@@ -215,8 +215,8 @@ const exitGame = () => {
     // prints each answered question to DOM and shows if user guesses right or wrong. Also shows correct answer
     userAnswers.forEach(answer => {
         results.innerHTML += `
-        <img src=${answer.image} alt="picture of student" style="height:150px" class=img-fluid">
-        <p class="d-flex justify-content-center pt-1 pb-4 list-none">☝ Your guess was ${answer.result} It's ${answer.name}</p>
+        <img src=${answer.image} alt="picture of student" style="height: 350px"  class=img-fluid">
+        <p class="d-flex justify-content-center pt-1 pb-4 list-none">☝ Your guess was ${answer.result} It's ${answer.country}</p>
         `;
     });
 
@@ -240,7 +240,7 @@ const playAgain = () => {
     highscoreEl.classList.add('hide');
     guesses = 0;
     userAnswers = [];
-    usedStudents = [];
+    usedFlags = [];
 };
 
 // invokes playAgain function once playAgainEl is clicked
