@@ -1,5 +1,6 @@
 // Grabbing elements from DOM
 const startGameEl = document.querySelector('#game-start');
+const difficultyEl = document.querySelector('#difficulty');
 const instructions = document.querySelector('#instructions');
 const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('#answers');
@@ -31,8 +32,8 @@ let highscore = 0;
 // stores available questions
 let options = [];
 
-// stores available questions and will be used when `options` can't provide
-let moreOptions = [];
+// get current highscore from localStorage
+let currentHighscore = localStorage.getItem("highscore")
 
 
 
@@ -50,9 +51,9 @@ const shuffleFlags = (array) => {
 // displays buttons for how many flags to guess on
 const frontPage = () => {
     startGameEl.innerHTML = `
-    <button class="playGame rounds-btn">10</button>
-    <button class="playGame rounds-btn">20</button>
-    <button class="playGame rounds-btn">${flags.length}</button>`;
+    <button class="rounds-btn start">10</button>
+    <button class="rounds-btn start">20</button>
+    <button class="rounds-btn start">50</button>`;
 };
 
 
@@ -79,11 +80,8 @@ const playGame = () => {
     // pushes the current `correctFlag` into usedFlag to avoid displaying again
     usedFlags.push(correctFlag);
 
-    // pushes correctFlag to back-up options
-    moreOptions.push(correctFlag);
-
     // displays image of correct Flag
-    pictureEl.innerHTML = `<img src=${correctFlag.image} class="img-fluid" id="flag-img">`
+    pictureEl.innerHTML = `<img src=${correctFlag.image} id="flag-img">`
 
     // sets an array of incorrect Flags to display as answer options
     let wrongFlags = flags.filter(flag => !usedFlags.includes(flag));
@@ -93,29 +91,27 @@ const playGame = () => {
     options = wrongFlags.slice(0, 3);
     options.push(correctFlag);
 
-    // sets array that can provide more options once needed
-    let moreOptionsSlice = moreOptions.slice(0, 3);
-    moreOptionsSlice.push(correctFlag);
 
     // shuffling options to be presented
     shuffleFlags(options);
-    shuffleFlags(moreOptions);
 
 
-    // chooses which array to choose options from
-    (options.length < 4)
-        ? moreOptionsSlice.forEach(flag => {
-            answersEl.innerHTML += `<button class="rounds-btn col-5 playGame" id="answer-btn">${flag.country}</button>`
-        })
-        : options.forEach(flag => {
-            answersEl.innerHTML += `<button class="rounds-btn col-5 playGame" id="answer-btn">${flag.country}</button>`
-        });
+    options.forEach(flag => {
+        answersEl.innerHTML += `<button id="answer-btn">${flag.country}</button>`
+    });
+
+    // prints current highscore from localStorage
+
+    roundCounterEl.innerHTML += `
+    <h3 class="question-counter">Current Highscore: ${currentHighscore}</h3>
+    `
+
 
 };
 
 
 
-// function for correct answers
+//  correct answers
 const correctChoice = flag => {
 
     // adds a key to array that shows if user guessed right
@@ -125,8 +121,7 @@ const correctChoice = flag => {
     userAnswers.push(flag)
 };
 
-
-// Function for incorrect answers
+//  incorrect answers
 const incorrectChoice = flag => {
 
     // adds a key to array that shows if user guessed wrong
@@ -152,8 +147,8 @@ startGameEl.addEventListener('click', e => {
         roundsToPlay = Number(e.target.innerText);
 
         // prints to DOM and updates question counter
-        roundCounterEl.innerHTML = `
-        <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
+        roundCounterEl.innerHTML += `
+        <h3 class="question-counter">Question: ${guesses + 1}/${roundsToPlay}</h3>
         `;
     };
 });
@@ -162,6 +157,9 @@ startGameEl.addEventListener('click', e => {
 answersEl.addEventListener('click', e => {
 
     if (e.target.tagName === "BUTTON") {
+
+        console.log("options:", options)
+        console.log("flags", flags)
 
         const buttons = document.querySelectorAll("#answer-btn")
 
@@ -173,22 +171,20 @@ answersEl.addEventListener('click', e => {
         // increments guesses by 1 for each click
         guesses++;
 
-        // Checks if answer was correct
+        // checks if answer was correct
         if (e.target.innerText === correctFlag.country) {
             correctChoice(correctFlag);
             e.target.innerHTML += '✅'
-            e.target.classList.add('correct')
         } else {
             incorrectChoice(correctFlag);
             e.target.innerHTML += '❌'
-            e.target.classList.add('wrong')
 
         };
 
         setTimeout(() => {
             // updates the round counter for each round
             roundCounterEl.innerHTML = `
-                <h3>Question ${guesses + 1}/${roundsToPlay}</h3>
+                <h3 class="question-counter">Question ${guesses + 1}/${roundsToPlay}</h3>
             `;
             // when a set number of rounds are played, exitGame() will be invoked.
             if (guesses === roundsToPlay) {
@@ -196,12 +192,12 @@ answersEl.addEventListener('click', e => {
             } else {
                 playGame();
             };
-        }, 1000)
+        }, 700)
     };
 });
 
 
-// function for game exit
+//  game exit
 const exitGame = () => {
 
     // hides everything except page that shows results
@@ -216,11 +212,11 @@ const exitGame = () => {
     if (percentage >= 80) {
         // prints results to DOM
         results.innerHTML =
-            `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-green">(${percentage}%)</span></h2>`
+            `<h2 class="result-heading">Your Result: ${correctAnswers.length}/${guesses} <span class="text-green">(${percentage}%)</span></h2>`
     } else {
         // prints results to DOM
         results.innerHTML =
-            `<h2 class="text-center mt-5">Your Results: ${correctAnswers.length}/${guesses} <span class="text-red">(${percentage}%)</span></h2>`
+            `<h2 class="result">Your Results: ${correctAnswers.length}/${guesses} <span class="text-red">(${percentage}%)</span></h2>`
     }
 
 
@@ -229,6 +225,7 @@ const exitGame = () => {
     if (correctAnswers.length > highscore) {
         highscore = correctAnswers.length;
         highscoreEl.innerText = `New Highscore: ${highscore}`;
+        localStorage.setItem("highscore", highscore)
     } else {
         highscoreEl.innerText = `Current Highscore: ${highscore}`;
     };
@@ -236,13 +233,13 @@ const exitGame = () => {
     // prints each answered question to DOM and shows if user guesses right or wrong. Also shows correct answer
     userAnswers.forEach(answer => {
         results.innerHTML += `
-        <img src=${answer.image} alt="flag to guess" class="img-fluid">
-        <p class="d-flex justify-content-center pt-1 pb-4 list-none">☝ Your guess was ${answer.result} It's ${answer.country}</p>
+        <img src=${answer.image} alt="flag to guess">
+        <p class="result">☝ Your guess was ${answer.result} It's ${answer.country}</p>
         `;
     });
 
     // displays a button for playing again
-    playAgainEl.innerHTML = `<button class="btn btn-primary py-3 mb-5">Play Again</button>`
+    playAgainEl.innerHTML = `<button>Play Again</button>`
 
     // hides highscoreEl from being displayed
     highscoreEl.classList.remove('hide');
@@ -276,21 +273,6 @@ frontPage();
 
 
 
-
-
-/**
- * Todo innan inlämning:
- * Refaktorera koden, ingen kod ska upprepas i onödan
- * Lägga in img-element i HTML, och istället pusha in en source genom playGame()
- * Gå igenom och ta bort variabler som ej används
-
- * Kontrollera så spelet är responsivt och funkar i mobil
- * Om tid finns, hitta ett bättre sätt för playAgain än att refresha sidan
- * göra ifs till ternary
- * Merge dev into main
- */
-
-// ## För att lösa problemet med att pusha fler alternativ testa skapa en kopia av shuffledStudents fast med map(student.name)
 
 
 
