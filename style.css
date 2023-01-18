@@ -226,6 +226,10 @@ button {
         margin: .5rem;
     }
 
+    #instructions {
+        margin: 0 2rem;
+    }
+
     #instructions>h2 {
         padding: 2rem 0;
     }
