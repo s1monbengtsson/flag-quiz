@@ -5,17 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classmate Quiz</title>
+    <title>Geo Quiz</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Bootstrap only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-
 </head>
 
-<body class="bg-light text-dark">
+<body>
     <div class="content-container">
-
         <div>
             <img src="./assets/banner.jpg" alt="flags" class="banner">
         </div>
@@ -23,28 +18,29 @@
         <div class="wrapper" id="wrapper">
             <header>
                 <p id="roundCounter"></p>
-                <h1 class="text-center">Guess The Flag</h1>
-                <div class="container d-flex justify-content-center mt-5">
+                <div class="intro-container">
+                    <h1 class="intro-heading">Guess The Flag</h1>
                     <div id="instructions">
-                        <h2>To start the game: Press the number of flags you want to guess:</h2>
-                        <ul class="d-flex justify-content-center" id="game-start"></ul>
+                        <h2>Choose the number of flags you want to guess:</h2>
+                        <ul id="game-start"></ul>
                     </div>
                 </div>
             </header>
 
-            <main class="container text-center ">
+            <main>
                 <div id="image-holder"></div>
-                <div class="mt-5 d-flex justify-content-center row" id="answers"></div>
+                <div id="answers"></div>
+                <div id="restart"></div>
             </main>
         </div>
 
-
-        <h3 class="text-end m-4" id="highscore"></h3>
-        <div class="text-center" id="results">
-            <div class="text-center" id="userAnswers"></div>
+        <h3 id="highscore"></h3>
+        <div id="results">
+            <div id="userAnswers"></div>
         </div>
 
-        <div class="d-flex justify-content-center" id="playAgain"></div>
+        <div id="playAgain"></div>
+        <a href="https://freeflagicons.com" target="_blank" class="credit">Icons by: www.freeflagicons.com</a>
     </div>
     <script src="flags.js"></script>
     <script src="app.js"></script>
