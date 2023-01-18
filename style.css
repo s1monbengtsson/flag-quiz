@@ -21,6 +21,7 @@ body {
 
 button {
     cursor: pointer;
+    color: black;
 }
 
 ul {
@@ -94,6 +95,7 @@ button {
 
 .restart {
     background-color: #0099ffa6;
+    margin-top: .5rem;
 }
 
 .banner {
