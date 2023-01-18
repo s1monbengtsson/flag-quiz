@@ -248,6 +248,10 @@ button {
         font-size: 1.7rem;
     }
 
+    #highscore {
+        text-align: center;
+    }
+
     .question-counter {
         font-size: .8rem;
     }
