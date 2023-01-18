@@ -4,6 +4,7 @@ const difficultyEl = document.querySelector('#difficulty');
 const instructions = document.querySelector('#instructions');
 const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('#answers');
+const restartEl = document.querySelector('#restart');
 const roundCounterEl = document.querySelector('#roundCounter');
 const wrapper = document.querySelector('#wrapper');
 const results = document.querySelector('#results');
@@ -106,7 +107,9 @@ const playGame = () => {
     <h3 class="question-counter">Current Highscore: ${currentHighscore}</h3>
     `
 
-
+    restartEl.innerHTML = `
+    <button class="restart">Restart Game</button>
+    `
 };
 
 
@@ -196,6 +199,13 @@ answersEl.addEventListener('click', e => {
     };
 });
 
+// if user clicks restart button mid game
+restartEl.addEventListener('click', e => {
+    if (e.target.tagName === "BUTTON") {
+        window.location.reload()
+    }
+})
+
 
 //  game exit
 const exitGame = () => {
@@ -254,6 +264,7 @@ const playAgain = () => {
     answersEl.innerHTML = '';
     playAgainEl.innerHTML = '';
     roundCounterEl.innerHTML = '';
+    restartEl.innerHTML = '';
     instructions.classList.remove('hide');
     highscoreEl.classList.add('hide');
     guesses = 0;
