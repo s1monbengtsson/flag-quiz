@@ -47,7 +47,7 @@ ul {
 
 .intro-heading {
     color: #ffffff;
-    margin-bottom: 1rem;
+    margin: 2rem;
 }
 
 
@@ -98,7 +98,7 @@ button {
 
 .banner {
     width: 100%;
-    height: 200px;
+    height: 150px;
     object-fit: cover;
     object-position: right;
 }
@@ -223,7 +223,11 @@ button {
     }
 
     .intro-heading {
-        margin-bottom: 0;
+        margin: .5rem;
+    }
+
+    #instructions>h2 {
+        padding: 2rem 0;
     }
 
     #game-start {
@@ -233,6 +237,9 @@ button {
 
     .start {
         margin-bottom: .5rem;
+        width: 50%;
+        margin: 0 auto 1.5rem;
+        padding: 1.5rem 0;
     }
 
     #flag-img {
