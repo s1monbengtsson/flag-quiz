@@ -1,0 +1,12 @@
+Skapa olika arrayer för olika svårighetsgrad
+
+easy: Sverige, Danmark, England et c
+medium: canada, thailand
+hard: botswana, bolivia osv
+
+mix: array av alla
+
+lägg in button för hint
+
+lägg credit till https://www.freeflagicons.com/country/georgia/round_icon/download/ 
+längst ner på sidan
