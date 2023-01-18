@@ -6,6 +6,7 @@ const pictureEl = document.querySelector('#image-holder');
 const answersEl = document.querySelector('#answers');
 const restartEl = document.querySelector('#restart');
 const roundCounterEl = document.querySelector('#roundCounter');
+const currentHighscoreEl = document.querySelector('#current-highscore');
 const wrapper = document.querySelector('#wrapper');
 const results = document.querySelector('#results');
 const playAgainEl = document.querySelector('#playAgain');
@@ -34,7 +35,7 @@ let highscore = 0;
 let options = [];
 
 // get current highscore from localStorage
-let currentHighscore = localStorage.getItem("highscore")
+let currentHighscore;
 
 
 
@@ -61,6 +62,9 @@ const frontPage = () => {
 // Function for game
 const playGame = () => {
 
+    // updates currentHighscore to highscore from localStorage
+    currentHighscore = localStorage.getItem("highscore")
+
     // empty question and answer before every run
     pictureEl.innerHTML = '';
     answersEl.innerHTML = '';
@@ -70,7 +74,6 @@ const playGame = () => {
 
     // shuffling array shuffledFlags
     shuffleFlags(shuffledFlags);
-
 
     // filters out all shuffledFlags that does not appear in `usedFlags` and stores this in new variable
     correctFlag = shuffledFlags.filter(flag => !usedFlags.includes(flag));
@@ -87,31 +90,21 @@ const playGame = () => {
     // sets an array of incorrect Flags to display as answer options
     let wrongFlags = flags.filter(flag => !usedFlags.includes(flag));
 
-
     // picks 3 wrong flags and 1 correct
     options = wrongFlags.slice(0, 3);
     options.push(correctFlag);
 
-
     // shuffling options to be presented
     shuffleFlags(options);
-
 
     options.forEach(flag => {
         answersEl.innerHTML += `<button id="answer-btn">${flag.country}</button>`
     });
 
-    // prints current highscore from localStorage
-
-    roundCounterEl.innerHTML += `
-    <h3 class="question-counter">Current Highscore: ${currentHighscore}</h3>
-    `
-
     restartEl.innerHTML = `
     <button class="restart">Restart Game</button>
     `
 };
-
 
 //  correct answers
 const correctChoice = flag => {
@@ -148,10 +141,18 @@ startGameEl.addEventListener('click', e => {
         // sets the number of rounds to play to the same number as the pressed button
         roundsToPlay = Number(e.target.innerText);
 
+        // prints current highscore from localStorage if not null
+        if (currentHighscore != null) {
+            currentHighscoreEl.innerHTML += `
+            <h3 class="question-counter">Current Highscore: ${currentHighscore}</h3>
+            `;
+        }
+
         // prints to DOM and updates question counter
         roundCounterEl.innerHTML += `
         <h3 class="question-counter">Question: ${guesses + 1}/${roundsToPlay}</h3>
         `;
+
     };
 });
 
@@ -159,9 +160,6 @@ startGameEl.addEventListener('click', e => {
 answersEl.addEventListener('click', e => {
 
     if (e.target.tagName === "BUTTON") {
-
-        console.log("options:", options)
-        console.log("flags", flags)
 
         const buttons = document.querySelectorAll("#answer-btn")
 
@@ -203,7 +201,7 @@ restartEl.addEventListener('click', e => {
     if (e.target.tagName === "BUTTON") {
         window.location.reload()
     }
-})
+});
 
 
 //  game exit
@@ -263,6 +261,7 @@ const playAgain = () => {
     answersEl.innerHTML = '';
     playAgainEl.innerHTML = '';
     roundCounterEl.innerHTML = '';
+    currentHighscoreEl.innerHTML = '';
     restartEl.innerHTML = '';
     instructions.classList.remove('hide');
     highscoreEl.classList.add('hide');
